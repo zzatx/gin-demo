@@ -1,4 +1,4 @@
-module cn.zzh.study/study-go
+module cn.zzh.study/gin-demo
 
 go 1.19
 
