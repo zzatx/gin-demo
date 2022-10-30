@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
 )
 
@@ -76,11 +77,22 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnsupportedMediaType, gin.H{"msg": "密码错误请确认后重试"})
 		return
 	}
-	//TODO 发放token
-	token := "111"
+	//发放token
+	token, err := common.ReleaseToken(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"msg": "token签发失败"})
+		log.Printf("token geanerate error : %v", err)
+		return
+	}
 
 	//返回结果
 	ctx.JSON(200, gin.H{"code": 200, "data": gin.H{"token": token}, "msg": "登陆成功"})
+}
+
+func Info(ctx *gin.Context) {
+	user, _ := ctx.Get("user")
+
+	ctx.JSON(http.StatusOK, gin.H{"code": 200, "data": gin.H{"user": user}})
 }
 
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
